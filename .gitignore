@@ -27,3 +27,10 @@ override.tf.json
 
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*
+
+
+## draw io files
+*.drawio*
+
+#DS Store file
+*.DS_Store
