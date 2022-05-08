@@ -1,6 +1,6 @@
 data "archive_file" "custom_header_lambda_zip" {
     type        = "zip"
-    source_dir  = "../custom_header_lambda"
+    source_dir  = "./custom_header_lambda"
     output_path = "custom_header_lambda.zip"
 }
 
