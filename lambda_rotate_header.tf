@@ -88,6 +88,11 @@ resource "aws_iam_policy" "custom_header_lambda_iam_policy" {
 POLICY
 }
 
+resource "aws_iam_role_policy_attachment" "lambda_attach" {
+  role       = aws_iam_role.iam_for_custom_header_lambda.name
+  policy_arn = aws_iam_policy.custom_header_lambda_iam_policy.arn
+}
+
 resource "aws_cloudwatch_event_rule" "rotate_custom_headers" {
   name        = "rotate_custom_header-s3-static-website"
   schedule_expression = "${var.cron_schedule}"

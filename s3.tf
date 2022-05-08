@@ -243,3 +243,8 @@ resource "aws_iam_policy" "s3_replication_exec_policy" {
 
 POLICY
   }
+
+resource "aws_iam_role_policy_attachment" "s3_attach" {
+  role       = aws_iam_role.replication.name
+  policy_arn = aws_iam_policy.s3_replication_exec_policy.arn
+}
