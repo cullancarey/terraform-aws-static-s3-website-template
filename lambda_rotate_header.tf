@@ -32,7 +32,12 @@ resource "aws_lambda_function" "rotate_custom_header_lambda" {
   handler       = "rotate_custom_headers.lambda_handler"
 
   source_code_hash = "${data.archive_file.custom_header_lambda_zip.output_base64sha256}"
-
+  environment {
+    variables = {
+      primary_bucket = "${var.root_domain_name}"
+      backup_bucket = "www.${var.root_domain_name}"
+    }
+  }
   runtime = "python3.8"
   timeout = 300
   tags = {

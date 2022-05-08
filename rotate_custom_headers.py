@@ -2,7 +2,7 @@ import boto3
 import json
 import random
 import string
-
+import os
 
 def get_bucket_policy(client, bucket_name):
 	result = client.get_bucket_policy(Bucket=f"{bucket_name}")
@@ -35,9 +35,8 @@ def get_cloudfront_headers(client, value):
 
 def lambda_handler(event, context):
 	s3 = boto3.client('s3')
-	bucket = 'justinschoenegge.com'
-	backup_bucket = 'backup-justinschoenegge.com'
-	# header = random_pass()
+	bucket = os.environ['primary_bucket']
+	backup_bucket = os.environ['backup_bucket']
 	value = random_pass()
 	policy = get_bucket_policy(s3, bucket)
 	backup_policy = get_bucket_policy(s3, backup_bucket)
