@@ -4,9 +4,11 @@ This terraform template will create all infrastructure necessary to run an AWS S
 ![Architecture](s3_static_website_arch.png)
 
 ### Pre-requistes
-1. An AWS account with admin access or specific access to relevant services listed in Resources below. 
-2. Terraform installed. See https://learn.hashicorp.com/tutorials/terraform/install-cli for details.
-3. A public hosted zone that will be used for the website. This zone **must** be named the same name as the website. For example, my website is cullancarey.com, so my hosted zone is named cullancarey.com. 
+1. This is a public module published to the Terraform registry: https://registry.terraform.io/modules/cullancarey/static-s3-website-template/aws/latest
+	- **Note:** If you are using the module, please ensure you copy the "custom_header_lambda" directory and the contained python file into the directory where you'll be deploying the terraform. The module depends on this directory being present and is not included when using the module itself. 
+2. An AWS account with admin access or specific access to relevant services listed in Resources below. 
+3. Terraform installed. See https://learn.hashicorp.com/tutorials/terraform/install-cli for details.
+4. A public hosted zone that will be used for the website. This zone **must** be named the same name as the website. For example, my website is cullancarey.com, so my hosted zone is named cullancarey.com. 
 	- **NOTE:** If you register your domain within Route53, there will be an option to create a hosted zone from the newly registerd domain. I recommend you use this option, especially if you do not understand DNS functionality.
 
 
