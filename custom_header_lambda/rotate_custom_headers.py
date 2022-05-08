@@ -24,7 +24,7 @@ def random_pass():
 	return password
 
 def get_cloudfront_headers(client, value):
-	distro = client.get_distribution_config(Id='EUCQJDP2T02XF')
+	distro = client.get_distribution_config(Id=f'{os.environ['cf_dist_id']}')
 	distro['DistributionConfig']['Origins']['Items'][0]['CustomHeaders']['Items'] = [{'HeaderName': 'Referer', 'HeaderValue': f'{value}'}]
 	distro['DistributionConfig']['Origins']['Items'][1]['CustomHeaders']['Items'] = [{'HeaderName': 'Referer', 'HeaderValue': f'{value}'}]
 	return distro['DistributionConfig'], distro['ETag']

@@ -36,6 +36,7 @@ resource "aws_lambda_function" "rotate_custom_header_lambda" {
     variables = {
       primary_bucket = "${var.root_domain_name}"
       backup_bucket = "www.${var.root_domain_name}"
+      cf_dist_id = aws_cloudfront_distribution.website_distribution.id
     }
   }
   runtime = "python3.8"
