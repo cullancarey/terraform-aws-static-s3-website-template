@@ -19,7 +19,7 @@ output "primary_bucket_arn" {
 }
 
 output "route53_zone_arn" {
-  value = aws_route53_zone.root_zone.arn
+  value = data.aws_route53_zone.root_zone.arn
   description = "The arn of the route53 hosted zone."
 }
 
