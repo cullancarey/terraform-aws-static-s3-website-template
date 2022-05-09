@@ -3,12 +3,6 @@ variable "root_domain_name" {
   description = "The domain name of your website."
 }
 
-variable "cron_schedule" {
-  type = string
-  default = "cron(0 6 1 * ? *)"
-  description = "A cron job specifying how often the lambda is triggered to update the secret string."
-}
-
 variable "website-bucket-region" {
   type = string
   description = "The primary region where your website will be hosted."
