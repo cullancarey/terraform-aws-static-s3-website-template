@@ -18,7 +18,7 @@ output "route53_zone_arn" {
   description = "The arn of the route53 hosted zone."
 }
 
-output "acm_domain_names" {
+output "acm_domain_name" {
   value = aws_acm_certificate.certificate.domain_name
   description = "The domain names that are associated to the ACM certificate."
 }
