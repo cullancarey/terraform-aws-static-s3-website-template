@@ -1,42 +1,29 @@
-resource "random_string" "header_value" {
-  length           = 20
-  special          = true
-  upper = true
-  lower = true
-  number = true
+resource "aws_cloudfront_origin_access_identity" "website_OAI" {
+  comment = "The OAI used to access our website buckets."
+}
+
+locals {
+  primary_s3_origin = "${var.root_domain_name}"
+  backup_s3_origin = "backup-${var.root_domain_name}"
 }
 
 resource "aws_cloudfront_distribution" "website_distribution" {
   origin {
-    custom_origin_config {
-      http_port              = "80"
-      https_port             = "443"
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
-    }
+    domain_name = aws_s3_bucket.website.bucket_regional_domain_name
+    origin_id   = local.primary_s3_origin
 
-    domain_name = "${aws_s3_bucket_website_configuration.website-bucket-config.website_endpoint}"
-    origin_id   = "${var.root_domain_name}"
-    custom_header {
-          name  = "${var.custom_header}"
-          value = random_string.header_value.result
-        }
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.website_OAI.cloudfront_access_identity_path
+    }
   }
 
   origin {
-    custom_origin_config {
-      http_port              = "80"
-      https_port             = "443"
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
-    }
+    domain_name = aws_s3_bucket.backup-website.bucket_regional_domain_name
+    origin_id   = local.backup_s3_origin
 
-    domain_name = "${aws_s3_bucket_website_configuration.backup-website-bucket-config.website_endpoint}"
-    origin_id   = "backup-${var.root_domain_name}"
-    custom_header {
-          name  = "${var.custom_header}"
-          value = random_string.header_value.result
-        }
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.website_OAI.cloudfront_access_identity_path
+    }
   }
 
     origin_group {
@@ -47,11 +34,12 @@ resource "aws_cloudfront_distribution" "website_distribution" {
     }
 
     member {
-      origin_id = "${var.root_domain_name}"
+      origin_id = local.primary_s3_origin
     }
 
     member {
-      origin_id = "backup-${var.root_domain_name}"
+      origin_id = local.backup_s3_origin
+      
     }
   }
 
@@ -64,9 +52,20 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   tags = {
     Name = "website_distribution"
   }
+  default_root_object = "index.html"
+  custom_error_response {
+    error_code = "404"
+    response_code = "404"
+    response_page_path = "/error.html"
+  }
+  custom_error_response {
+    error_code = "403"
+    response_code = "403"
+    response_page_path = "/error.html"
+  }
 
   default_cache_behavior {
-    viewer_protocol_policy = "redirect-to-https"
+    viewer_protocol_policy = "https-only"
     compress               = true
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]

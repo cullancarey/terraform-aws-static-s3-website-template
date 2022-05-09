@@ -8,11 +8,6 @@ output "cloudfront_distribution_domain_name" {
   description = "The domain name of the Cloudfront distribution."
 }
 
-output "lambda_function_name" {
-  value = aws_lambda_function.rotate_custom_header_lambda.function_name
-  description = "The name of the lambda function that rotates the secret string."
-}
-
 output "primary_bucket_arn" {
   value = aws_s3_bucket.website.arn
   description = "The arn of the primary website bucket."

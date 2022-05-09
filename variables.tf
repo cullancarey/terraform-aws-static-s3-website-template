@@ -3,12 +3,6 @@ variable "root_domain_name" {
   description = "The domain name of your website."
 }
 
-variable "custom_header" {
-  type = string
-  default = "Referer"
-  description = "The header value for the secret string passed from Cloudfront to S3."
-}
-
 variable "cron_schedule" {
   type = string
   default = "cron(0 6 1 * ? *)"
