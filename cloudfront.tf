@@ -72,6 +72,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
     target_origin_id       = "HA-website"
     cache_policy_id = data.aws_cloudfront_cache_policy.cache_policy.id
     smooth_streaming = false
+  }
 
   restrictions {
     geo_restriction {
