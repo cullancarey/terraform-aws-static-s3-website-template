@@ -70,21 +70,8 @@ resource "aws_cloudfront_distribution" "website_distribution" {
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
     target_origin_id       = "HA-website"
-    min_ttl                = 0
-    default_ttl            = 0
-    max_ttl                = 0
+    cache_policy_id = data.aws_cloudfront_cache_policy.cache_policy.id
     smooth_streaming = false
-    forwarded_values {
-              headers                 = [] 
-              query_string            = false 
-              query_string_cache_keys = [] 
-
-              cookies {
-                  forward           = "none" 
-                  whitelisted_names = [] 
-                }
-            }
-  }
 
   restrictions {
     geo_restriction {
@@ -99,3 +86,9 @@ resource "aws_cloudfront_distribution" "website_distribution" {
     minimum_protocol_version = "TLSv1.2_2021"
   }
 }
+
+
+data "aws_cloudfront_cache_policy" "cache_policy" {
+  name = "Managed-CachingOptimized"
+}
+
