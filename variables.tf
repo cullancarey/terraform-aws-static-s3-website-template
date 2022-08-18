@@ -23,3 +23,9 @@ variable "cloudfront_price_class" {
     error_message = "Valid values for var: cloudfront_price_class are PriceClass_All, PriceClass_200, or PriceClass_100."
   } 
 }
+
+variable "cloudfront_viewer_protocol_policy" {
+  type        = string
+  description = "[https-only, redirect-to-https]"
+  default = "https-only"
+}
