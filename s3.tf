@@ -23,7 +23,7 @@ resource "aws_s3_bucket_website_configuration" "website-bucket-config" {
   }
 
   error_document {
-    key = "error.html"
+    key = "index.html"
   }
 }
 
@@ -77,7 +77,7 @@ data "aws_iam_policy_document" "primary_s3_policy" {
 resource "aws_s3_bucket_policy" "website-bucket-policy" {
   bucket = aws_s3_bucket.website.id
   policy = data.aws_iam_policy_document.primary_s3_policy.json
-}   
+}
 
 ################################################################################################################################################
 ################################################################################################################################################
@@ -153,7 +153,7 @@ resource "aws_s3_bucket_policy" "backup-website-bucket-policy" {
   bucket = aws_s3_bucket.backup-website.id
   provider    = aws.backup-website-region
   policy = data.aws_iam_policy_document.backup_s3_policy.json
-}   
+}
 
 
 resource "aws_iam_role" "replication" {
@@ -174,7 +174,7 @@ resource "aws_iam_role" "replication" {
   ]
 }
 
-POLICY 
+POLICY
   }
 
 

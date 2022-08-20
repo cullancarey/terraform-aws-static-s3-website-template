@@ -39,14 +39,14 @@ resource "aws_cloudfront_distribution" "website_distribution" {
 
     member {
       origin_id = local.backup_s3_origin
-      
+
     }
   }
 
 
   aliases = ["${var.root_domain_name}", "www.${var.root_domain_name}"]
   enabled             = true
-  comment = "Distribution for ${var.root_domain_name}" 
+  comment = "Distribution for ${var.root_domain_name}"
   price_class = "PriceClass_100"
   wait_for_deployment = true
   tags = {
@@ -55,8 +55,8 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   default_root_object = "index.html"
   custom_error_response {
     error_code = "404"
-    response_code = "404"
-    response_page_path = "/error.html"
+    response_code = "200"
+    response_page_path = "/index.html"
   }
   custom_error_response {
     error_code = "403"
