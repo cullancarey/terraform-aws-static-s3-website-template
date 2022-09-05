@@ -3,8 +3,8 @@ resource "aws_cloudfront_origin_access_identity" "website_OAI" {
 }
 
 locals {
-  primary_s3_origin = "${var.root_domain_name}"
-  backup_s3_origin = "backup-${var.root_domain_name}"
+  primary_s3_origin = var.root_domain_name
+  backup_s3_origin  = "backup-${var.root_domain_name}"
 }
 
 resource "aws_cloudfront_distribution" "website_distribution" {
@@ -26,7 +26,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
     }
   }
 
-    origin_group {
+  origin_group {
     origin_id = "HA-website"
 
     failover_criteria {
@@ -44,34 +44,34 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   }
 
 
-  aliases = ["${var.root_domain_name}", "www.${var.root_domain_name}"]
+  aliases             = ["${var.root_domain_name}", "www.${var.root_domain_name}"]
   enabled             = true
-  comment = "Distribution for ${var.root_domain_name}"
-  price_class = "PriceClass_100"
+  comment             = "Distribution for ${var.root_domain_name}"
+  price_class         = "PriceClass_100"
   wait_for_deployment = true
   tags = {
     Name = "website_distribution"
   }
   default_root_object = "index.html"
   custom_error_response {
-    error_code = "404"
-    response_code = "200"
+    error_code         = "404"
+    response_code      = "200"
     response_page_path = "/index.html"
   }
   custom_error_response {
-    error_code = "403"
-    response_code = "200"
+    error_code         = "403"
+    response_code      = "200"
     response_page_path = "/index.html"
   }
 
   default_cache_behavior {
-    viewer_protocol_policy = "${var.cloudfront_viewer_protocol_policy}"
+    viewer_protocol_policy = var.cloudfront_viewer_protocol_policy
     compress               = true
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
     target_origin_id       = "HA-website"
-    cache_policy_id = data.aws_cloudfront_cache_policy.cache_policy.id
-    smooth_streaming = false
+    cache_policy_id        = data.aws_cloudfront_cache_policy.cache_policy.id
+    smooth_streaming       = false
   }
 
   restrictions {
@@ -81,10 +81,10 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = "${aws_acm_certificate.certificate.arn}"
-    ssl_support_method  = "sni-only"
+    acm_certificate_arn            = aws_acm_certificate.certificate.arn
+    ssl_support_method             = "sni-only"
     cloudfront_default_certificate = false
-    minimum_protocol_version = "TLSv1.2_2021"
+    minimum_protocol_version       = "TLSv1.2_2021"
   }
 }
 
