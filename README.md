@@ -25,6 +25,14 @@ This is a public module published to the Terraform registry: https://registry.te
 	- Type: string
 	- Description: The price class for the Cloudfront distribution. Valid entries are PriceClass_All, PriceClass_200, or PriceClass_100.
 	- Default: PriceClass_100
+5. cloudfront_viewer_protocol_policy
+	- Type: string
+	- Description: https-only, redirect-to-https
+	- Default: https-only
+6. default_tags
+	- Type: map(string)
+	- Description: Default tags for resources created in module. Type is map so please use format: {"key"="value"}.
+	- Default: {}
 
 
 ### Resources
