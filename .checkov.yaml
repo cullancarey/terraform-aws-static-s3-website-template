@@ -1,5 +1,3 @@
-directory:
-  - terraform
 skip-check:
   - CKV_AWS_145
   - CKV_AWS_50
