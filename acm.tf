@@ -11,6 +11,9 @@ resource "aws_acm_certificate" "certificate" {
   tags = {
     Name = "website-certificate"
   }
+  lifecycle {
+    create_before_destroy = true
+  }
 
 }
 
