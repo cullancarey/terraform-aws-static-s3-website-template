@@ -29,3 +29,9 @@ variable "cloudfront_viewer_protocol_policy" {
   description = "[https-only, redirect-to-https]"
   default     = "https-only"
 }
+
+variable "default_tags" {
+  type        = map(string)
+  description = "Default tags for resources created in module. Type is map so please use format: {\"key\"=\"value\"}"
+  default     = {}
+}

@@ -13,6 +13,11 @@ output "primary_bucket_arn" {
   description = "The arn of the primary website bucket."
 }
 
+output "backup_bucket_arn" {
+  value       = aws_s3_bucket.backup-website.arn
+  description = "The arn of the backup website bucket."
+}
+
 output "route53_zone_arn" {
   value       = data.aws_route53_zone.root_zone.arn
   description = "The arn of the route53 hosted zone."

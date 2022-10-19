@@ -2,11 +2,6 @@ resource "aws_cloudfront_origin_access_identity" "website_OAI" {
   comment = "The OAI used to access our website buckets."
 }
 
-locals {
-  primary_s3_origin = var.root_domain_name
-  backup_s3_origin  = "backup-${var.root_domain_name}"
-}
-
 resource "aws_cloudfront_distribution" "website_distribution" {
   origin {
     domain_name = aws_s3_bucket.website.bucket_regional_domain_name
