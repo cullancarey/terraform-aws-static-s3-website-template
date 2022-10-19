@@ -1,19 +1,18 @@
 resource "aws_s3_bucket" "website" {
-  bucket = "${var.root_domain_name}"
-
-    tags = {
-    Name        = "website-bucket-s3-static-website"
+  bucket        = var.root_domain_name
+  force_destroy = true
+  tags = {
+    Name = "website-bucket-s3-static-website"
   }
 }
 
 resource "aws_s3_bucket_public_access_block" "s3Public" {
-bucket = "${aws_s3_bucket.website.id}"
-block_public_acls = true
-block_public_policy = true
-restrict_public_buckets = true
-ignore_public_acls = true
+  bucket                  = aws_s3_bucket.website.id
+  block_public_acls       = true
+  block_public_policy     = true
+  restrict_public_buckets = true
+  ignore_public_acls      = true
 }
-
 
 resource "aws_s3_bucket_website_configuration" "website-bucket-config" {
   bucket = aws_s3_bucket.website.bucket
@@ -23,7 +22,7 @@ resource "aws_s3_bucket_website_configuration" "website-bucket-config" {
   }
 
   error_document {
-    key = "error.html"
+    key = "index.html"
   }
 }
 
@@ -42,19 +41,19 @@ resource "aws_s3_bucket_replication_configuration" "website-bucket-replication" 
   bucket = aws_s3_bucket.website.id
 
   rule {
-      id     = "backup-website"
-      status = "Enabled"
+    id     = "backup-website"
+    status = "Enabled"
     destination {
-        bucket  = aws_s3_bucket.backup-website.arn
-      }
+      bucket = aws_s3_bucket.backup-website.arn
     }
+  }
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "website-bucket-lifecycle-rule" {
   bucket = aws_s3_bucket.website.id
 
   rule {
-   id      = "delete versions"
+    id     = "delete versions"
     status = "Enabled"
     noncurrent_version_expiration {
       noncurrent_days = 2
@@ -77,7 +76,7 @@ data "aws_iam_policy_document" "primary_s3_policy" {
 resource "aws_s3_bucket_policy" "website-bucket-policy" {
   bucket = aws_s3_bucket.website.id
   policy = data.aws_iam_policy_document.primary_s3_policy.json
-}   
+}
 
 ################################################################################################################################################
 ################################################################################################################################################
@@ -86,26 +85,27 @@ resource "aws_s3_bucket_policy" "website-bucket-policy" {
 
 ##BACK UP WEBSITE BUCKET##
 resource "aws_s3_bucket" "backup-website" {
-  bucket = "backup-${var.root_domain_name}"
-  provider    = aws.backup-website-region
-    tags = {
-    Name        = "backup-website-bucket-s3-static-website"
+  bucket        = "backup-${var.root_domain_name}"
+  force_destroy = true
+  provider      = aws.backup-website-region
+  tags = {
+    Name = "backup-website-bucket-s3-static-website"
   }
 }
 
 resource "aws_s3_bucket_public_access_block" "backup-s3Public" {
-bucket = "${aws_s3_bucket.backup-website.id}"
-provider    = aws.backup-website-region
-block_public_acls = true
-block_public_policy = true
-restrict_public_buckets = true
-ignore_public_acls = true
+  bucket                  = aws_s3_bucket.backup-website.id
+  provider                = aws.backup-website-region
+  block_public_acls       = true
+  block_public_policy     = true
+  restrict_public_buckets = true
+  ignore_public_acls      = true
 }
 
 
 resource "aws_s3_bucket_website_configuration" "backup-website-bucket-config" {
-  bucket = aws_s3_bucket.backup-website.bucket
-  provider    = aws.backup-website-region
+  bucket   = aws_s3_bucket.backup-website.bucket
+  provider = aws.backup-website-region
 
   index_document {
     suffix = "index.html"
@@ -117,19 +117,19 @@ resource "aws_s3_bucket_website_configuration" "backup-website-bucket-config" {
 }
 
 resource "aws_s3_bucket_versioning" "backup-website-bucket-versioning" {
-  bucket = aws_s3_bucket.backup-website.id
-  provider    = aws.backup-website-region
+  bucket   = aws_s3_bucket.backup-website.id
+  provider = aws.backup-website-region
   versioning_configuration {
     status = "Enabled"
   }
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "website-backup-bucket-lifecycle-rule" {
-  bucket = aws_s3_bucket.backup-website.id
-  provider    = aws.backup-website-region
+  bucket   = aws_s3_bucket.backup-website.id
+  provider = aws.backup-website-region
 
   rule {
-   id      = "delete versions"
+    id     = "delete versions"
     status = "Enabled"
     noncurrent_version_expiration {
       noncurrent_days = 2
@@ -150,10 +150,10 @@ data "aws_iam_policy_document" "backup_s3_policy" {
 }
 
 resource "aws_s3_bucket_policy" "backup-website-bucket-policy" {
-  bucket = aws_s3_bucket.backup-website.id
-  provider    = aws.backup-website-region
-  policy = data.aws_iam_policy_document.backup_s3_policy.json
-}   
+  bucket   = aws_s3_bucket.backup-website.id
+  provider = aws.backup-website-region
+  policy   = data.aws_iam_policy_document.backup_s3_policy.json
+}
 
 
 resource "aws_iam_role" "replication" {
@@ -174,14 +174,14 @@ resource "aws_iam_role" "replication" {
   ]
 }
 
-POLICY 
-  }
+POLICY
+}
 
 
 resource "aws_iam_policy" "s3_replication_exec_policy" {
-    name = "s3crr_policy_for_${var.root_domain_name}"
-    path = "/service-role/"
-    policy = <<POLICY
+  name   = "s3crr_policy_for_${var.root_domain_name}"
+  path   = "/service-role/"
+  policy = <<POLICY
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -220,7 +220,7 @@ resource "aws_iam_policy" "s3_replication_exec_policy" {
 }
 
 POLICY
-  }
+}
 
 resource "aws_iam_role_policy_attachment" "s3_attach" {
   role       = aws_iam_role.replication.name
