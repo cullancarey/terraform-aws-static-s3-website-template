@@ -8,14 +8,14 @@ resource "aws_cloudfront_origin_access_control" "website_origin_access_control" 
 
 resource "aws_cloudfront_distribution" "website_distribution" {
   origin {
-    domain_name = aws_s3_bucket.website.bucket_regional_domain_name
-    origin_id   = local.primary_s3_origin
+    domain_name              = aws_s3_bucket.website.bucket_regional_domain_name
+    origin_id                = local.primary_s3_origin
     origin_access_control_id = aws_cloudfront_origin_access_control.website_origin_access_control.id
   }
 
   origin {
-    domain_name = aws_s3_bucket.backup-website.bucket_regional_domain_name
-    origin_id   = local.backup_s3_origin
+    domain_name              = aws_s3_bucket.backup-website.bucket_regional_domain_name
+    origin_id                = local.backup_s3_origin
     origin_access_control_id = aws_cloudfront_origin_access_control.website_origin_access_control.id
   }
 
