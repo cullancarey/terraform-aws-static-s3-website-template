@@ -1,24 +1,22 @@
-resource "aws_cloudfront_origin_access_identity" "website_OAI" {
-  comment = "The OAI used to access our website buckets."
+resource "aws_cloudfront_origin_access_control" "website_origin_access_control" {
+  name                              = "${var.root_domain_name} Access Control Policy"
+  description                       = "Cloudfront access control policy for the ${var.root_domain_name} distribution."
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
 }
 
 resource "aws_cloudfront_distribution" "website_distribution" {
   origin {
-    domain_name = aws_s3_bucket.website.bucket_regional_domain_name
-    origin_id   = local.primary_s3_origin
-
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.website_OAI.cloudfront_access_identity_path
-    }
+    domain_name              = aws_s3_bucket.website.bucket_regional_domain_name
+    origin_id                = local.primary_s3_origin
+    origin_access_control_id = aws_cloudfront_origin_access_control.website_origin_access_control.id
   }
 
   origin {
-    domain_name = aws_s3_bucket.backup-website.bucket_regional_domain_name
-    origin_id   = local.backup_s3_origin
-
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.website_OAI.cloudfront_access_identity_path
-    }
+    domain_name              = aws_s3_bucket.backup-website.bucket_regional_domain_name
+    origin_id                = local.backup_s3_origin
+    origin_access_control_id = aws_cloudfront_origin_access_control.website_origin_access_control.id
   }
 
   origin_group {
