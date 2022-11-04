@@ -61,21 +61,28 @@ resource "aws_s3_bucket_lifecycle_configuration" "website-bucket-lifecycle-rule"
   }
 }
 
-data "aws_iam_policy_document" "primary_s3_policy" {
-  statement {
-    actions   = ["s3:GetObject"]
-    resources = ["${aws_s3_bucket.website.arn}/*"]
-
-    principals {
-      type        = "AWS"
-      identifiers = [aws_cloudfront_origin_access_identity.website_OAI.iam_arn]
-    }
-  }
-}
-
 resource "aws_s3_bucket_policy" "website-bucket-policy" {
   bucket = aws_s3_bucket.website.id
-  policy = data.aws_iam_policy_document.primary_s3_policy.json
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": {
+        "Sid": "AllowCloudFrontServicePrincipalReadOnly",
+        "Effect": "Allow",
+        "Principal": {
+            "Service": "cloudfront.amazonaws.com"
+        },
+        "Action": "s3:GetObject",
+        "Resource": "${aws_s3_bucket.website.arn}/*",
+        "Condition": {
+            "StringEquals": {
+                "AWS:SourceArn": "${aws_cloudfront_distribution.website_distribution.arn}"
+            }
+        }
+    }
+}
+
+POLICY
 }
 
 ################################################################################################################################################
@@ -137,22 +144,29 @@ resource "aws_s3_bucket_lifecycle_configuration" "website-backup-bucket-lifecycl
   }
 }
 
-data "aws_iam_policy_document" "backup_s3_policy" {
-  statement {
-    actions   = ["s3:GetObject"]
-    resources = ["${aws_s3_bucket.backup-website.arn}/*"]
-
-    principals {
-      type        = "AWS"
-      identifiers = [aws_cloudfront_origin_access_identity.website_OAI.iam_arn]
-    }
-  }
-}
-
 resource "aws_s3_bucket_policy" "backup-website-bucket-policy" {
   bucket   = aws_s3_bucket.backup-website.id
   provider = aws.backup-website-region
-  policy   = data.aws_iam_policy_document.backup_s3_policy.json
+  policy   = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": {
+        "Sid": "AllowCloudFrontServicePrincipalReadOnly",
+        "Effect": "Allow",
+        "Principal": {
+            "Service": "cloudfront.amazonaws.com"
+        },
+        "Action": "s3:GetObject",
+        "Resource": "${aws_s3_bucket.backup-website.arn}/*",
+        "Condition": {
+            "StringEquals": {
+                "AWS:SourceArn": "${aws_cloudfront_distribution.website_distribution.arn}"
+            }
+        }
+    }
+}
+
+POLICY
 }
 
 
